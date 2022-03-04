@@ -1,0 +1,113 @@
+﻿@model List<Movie>
+
+@{ 
+    ViewData["Title"] = "Movies";
+}
+<h2>
+    <i class="bi bi-film"></i>
+    Movies</h2>
+<hr />
+<a class="btn btn-primary" asp-action="Create"asp-controller="Movies">
+    <i class="bi bi-plus"></i>
+    Add Movie</a>
+
+<div class="mt-4">
+
+    @if(!Model.Any())
+    {
+    <div class="alert alert-warning" role="alert">
+        <i class="bi bi-exclamation-square"></i>
+
+        No movies found!
+    </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var movie in Model)
+            {
+            <div class="col-12">
+
+                <div class="card mb-3">
+                    <div class="row no-gutters">
+
+                        <div class="col-md-2" style="min-height:236px;background-size:100%;background-repeat:no-repeat;
+                            background-image:url(data:image\/*;base64,@(Convert.ToBase64String(movie.Poster))"></div>
+
+                        <div class="col-md-10">
+                            <div class="card-body d-flex flex-column justify-content-between h-100">
+                                <div>
+                                    <h5 class="card-title">@movie.Title (@movie.Year)</h5>
+                                    <p class="card-text text-justify">@(movie.Storeline.Length>500?$"{movie.Storeline.Substring(0,500)}...":movie.Storeline)</p>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <p class="card-text mt-2 mb-0">
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <small class="text-muted"> @movie.Rate.ToString("0.0")</small>
+                                    </p>
+                                    <div>
+                                        <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-outline-secondary">
+                                            <i class="bi bi-camera-reels"></i>
+                                            Details
+                                        </a>
+
+                                        <a asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                            Edit
+                                        </a>
+
+                                        <a href="javascript:;" class="btn btn-danger js-delete" data-id="@movie.Id">
+                                            <i class="bi bi-trash"></i>
+                                            Delete
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            }
+
+        </div>
+
+    }
+
+</div>
+@section Scripts
+{
+    <script>
+        $(document).ready(function ()
+        {
+            $('.js-delete').on('click', function () {
+
+                var btn = $(this);
+                var confirmation = confirm('Do you really want to delete this item?');
+                if (confirmation) {
+                    $.ajax({
+                        url: '/Movies/Delete/' + btn.data('id'),
+                        success: function () {
+
+                            //lw ok ms7 el movie from database hyro7 3la success we ynfz el function
+                            //bs ana hna el mfroud kont anady el toaster bs hwa m4t8l4 m32ya
+                            btn.parents('.col-12').fadeOut();
+                            //toastr.success('movie deleted successfully')
+                        },
+                        error: function () {
+                            //toastr.error('something is wrong!')
+                        }
+
+
+                    })
+                }
+            })
+            
+              
+            
+        }
+            )
+    </script>
+}
